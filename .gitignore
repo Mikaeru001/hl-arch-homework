@@ -152,9 +152,7 @@ Thumbs.db
 *.sqlite
 *.sqlite3
 
-# PostgreSQL data directory (ignore contents but keep directory)
-postgres_data/*
-!postgres_data/.gitkeep
+
 
 # Assignment file (ignore but keep docs directory)
 docs/задания.md
