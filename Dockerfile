@@ -9,4 +9,5 @@ COPY . .
 
 EXPOSE 8000
 
-CMD ["python", "app.py"] 
+# По умолчанию запускаем инициализацию
+CMD ["python", "init_app.py"] 

@@ -2,6 +2,8 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 import os
 import secrets
+import subprocess
+import sys
 
 app = Flask(__name__)
 
@@ -47,7 +49,17 @@ def login():
 def health():
     return jsonify({'status': 'healthy'})
 
+def run_migrations():
+    """Запуск миграций Alembic"""
+    try:
+        result = subprocess.run([sys.executable, "-m", "alembic", "upgrade", "head"], 
+                              capture_output=True, text=True, check=True)
+        print("Migrations completed successfully")
+        print(result.stdout)
+    except subprocess.CalledProcessError as e:
+        print(f"Migration failed: {e}")
+        print(f"Error output: {e.stderr}")
+        raise
+
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
     app.run(host='0.0.0.0', port=8000, debug=True) 

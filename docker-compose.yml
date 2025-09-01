@@ -28,6 +28,8 @@ services:
         condition: service_healthy
     volumes:
       - .:/app
+    restart: on-failure:3
+    command: python init_app.py
 
 volumes:
   postgres_data:
