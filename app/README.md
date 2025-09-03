@@ -2,6 +2,8 @@
 
 Простое Flask приложение с JSON REST API и PostgreSQL в качестве хранилища данных.
 
+OpenAPI спецификация взята по [ссылке](https://github.com/OtusTeam/highload/blob/d952f8bf71cb979f30e1657f37713ddd33b4451d/homework/openapi.json).
+
 ## Требования
 
 - Docker
