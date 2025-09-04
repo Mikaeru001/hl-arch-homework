@@ -84,6 +84,74 @@
           }
         }
       }
+    },
+    "/user/register": {
+      "post": {
+        "operationId": "register_user",
+        "x-openapi-router-controller": "infra.rest.users",
+        "description": "Регистрация нового пользователя",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "first_name": {
+                    "type": "string",
+                    "example": "Имя"
+                  },
+                  "second_name": {
+                    "type": "string",
+                    "example": "Фамилия"
+                  },
+                  "birthdate": {
+                    "$ref": "#/components/schemas/BirthDate"
+                  },
+                  "biography": {
+                    "type": "string",
+                    "example": "Хобби, интересы и т.п."
+                  },
+                  "city": {
+                    "type": "string",
+                    "example": "Москва"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "Секретная строка"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Успешная регистрация",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user_id": {
+                      "type": "string",
+                      "example": "e4d2e6b0-cde2-42c5-aac3-0b8316f21e58"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Невалидные данные"
+          },
+          "500": {
+            "$ref": "#/components/responses/5xx"
+          },
+          "503": {
+            "$ref": "#/components/responses/5xx"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -129,6 +197,12 @@
       "UserId": {
         "type": "string",
         "description": "Идентификатор пользователя"
+      },
+      "BirthDate": {
+        "type": "string",
+        "description": "Дата рождения",
+        "format": "date",
+        "example": "2017-02-01"
       }
     }
   }

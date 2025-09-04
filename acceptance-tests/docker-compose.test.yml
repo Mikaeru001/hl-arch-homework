@@ -11,8 +11,8 @@ services:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      timeout: 5s
+      interval: 5s
+      timeout: 2s
       retries: 5
 
   app:
@@ -21,6 +21,7 @@ services:
       - "8000:8000"
     environment:
       DATABASE_URL: postgresql://postgres:password@postgres:5432/app_db
+      PYTHONUNBUFFERED: 1
     depends_on:
       postgres:
         condition: service_healthy
@@ -30,10 +31,9 @@ services:
     command: python init_app.py
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
-      interval: 10s
-      timeout: 5s
+      interval: 5s
+      timeout: 2s
       retries: 5
-      start_period: 5s
 
   acceptance-tests:
     build: .
@@ -41,7 +41,7 @@ services:
       app:
         condition: service_healthy
     environment:
-      - PYTHONUNBUFFERED=1
+      PYTHONUNBUFFERED: 1
 
 volumes:
   postgres_data: 
