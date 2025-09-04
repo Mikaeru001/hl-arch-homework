@@ -20,7 +20,7 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
-from app import db
+from models import db
 target_metadata = db.metadata
 
 # other values from the config, defined by the needs of env.py,
