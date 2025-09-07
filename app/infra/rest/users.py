@@ -7,7 +7,7 @@ from app.users import UserService
 
 logger = logging.getLogger(__name__)
 
-def register_user():
+def register_user(body: dict):
     """
     Функция регистрации нового пользователя.
     Соответствует operationId: register_user в OpenAPI спецификации.
@@ -16,11 +16,8 @@ def register_user():
         # Получаем экземпляр UserService через инжектор
         user_service = injector.get(UserService)
         
-        # Получаем данные из запроса
-        data = request.get_json()
-        
         # Вызываем метод сервиса для регистрации пользователя
-        result = user_service.register_user(data)
+        result = user_service.register_user(body)
         
         return jsonify(result), 200
         
