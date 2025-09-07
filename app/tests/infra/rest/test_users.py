@@ -7,25 +7,28 @@ from unittest.mock import Mock
 from infra.rest.users import register_user
 
 
-def test_register_user_calls_user_service(mocker):
-    """
-    Тест проверяет, что контроллер users вызывает метод register_user 
-    экземпляра UserService через инжектор.
-    """
-    # Создаем mock объект для UserService
-    mock_user_service = mocker.Mock()
-    mock_user_service.register_user.return_value = {'user_id': 'test_id'}
-    
-    # Патчим инжектор по пути, где он используется в контроллере
-    mock_injector = mocker.patch('infra.rest.users.injector')
-    mock_injector.get.return_value = mock_user_service
-    
-    # Патчим jsonify
-    mock_jsonify = mocker.patch('infra.rest.users.jsonify')
-    mock_jsonify.return_value = {'user_id': 'test_id'}
-    
-    # Подготавливаем тестовые данные
-    test_data = {
+@pytest.fixture
+def mock_user_service(mocker):
+    """Фикстура для создания mock UserService"""
+    return mocker.Mock()
+
+
+@pytest.fixture
+def mock_injector(mocker):
+    """Фикстура для mock инжектора"""
+    return mocker.patch('infra.rest.users.injector')
+
+
+@pytest.fixture
+def mock_jsonify(mocker):
+    """Фикстура для mock jsonify"""
+    return mocker.patch('infra.rest.users.jsonify')
+
+
+@pytest.fixture
+def valid_user_data():
+    """Фикстура с валидными тестовыми данными пользователя"""
+    return {
         'first_name': 'Иван',
         'second_name': 'Иванов',
         'birthdate': '1990-01-01',
@@ -33,91 +36,12 @@ def test_register_user_calls_user_service(mocker):
         'city': 'Москва',
         'password': 'password123'
     }
-    
-    # Вызываем функцию контроллера с тестовыми данными
-    result = register_user(test_data)
-    
-    # Проверяем, что инжектор был вызван с правильным классом
-    mock_injector.get.assert_called_once()
-    
-    # Проверяем, что метод register_user был вызван с правильными данными
-    mock_user_service.register_user.assert_called_once_with(test_data)
-    
-    # Проверяем, что jsonify был вызван с результатом
-    mock_jsonify.assert_called_once_with({'user_id': 'test_id'})
-    
-    # Проверяем, что функция вернула правильный результат
-    assert result[1] == 200  # status code
 
 
-def test_register_user_handles_exception(mocker):
-    """
-    Тест проверяет, что контроллер правильно обрабатывает исключения.
-    """
-    # Патчим инжектор, чтобы он выбрасывал исключение
-    mock_injector = mocker.patch('infra.rest.users.injector')
-    mock_injector.get.side_effect = Exception("Ошибка инжектора")
-    
-    # Патчим jsonify
-    mock_jsonify = mocker.patch('infra.rest.users.jsonify')
-    mock_jsonify.return_value = {'error': 'Ошибка инжектора'}
-    
-    # Подготавливаем тестовые данные
-    test_data = {'test': 'data'}
-    
-    # Вызываем функцию контроллера
-    result = register_user(test_data)
-    
-    # Проверяем, что функция вернула ошибку 500
-    assert result[1] == 500
-    mock_jsonify.assert_called_once_with({'error': 'Ошибка инжектора'})
-
-
-def test_register_user_with_empty_data(mocker):
-    """
-    Тест проверяет поведение контроллера с пустыми данными.
-    """
-    # Создаем mock объект для UserService
-    mock_user_service = mocker.Mock()
-    mock_user_service.register_user.return_value = {'error': 'No data provided'}
-    
-    # Патчим инжектор
-    mock_injector = mocker.patch('infra.rest.users.injector')
-    mock_injector.get.return_value = mock_user_service
-    
-    # Патчим jsonify
-    mock_jsonify = mocker.patch('infra.rest.users.jsonify')
-    mock_jsonify.return_value = {'error': 'No data provided'}
-    
-    # Вызываем функцию контроллера с None
-    result = register_user(None)
-    
-    # Проверяем, что UserService был вызван с None
-    mock_user_service.register_user.assert_called_once_with(None)
-    
-    # Проверяем, что функция вернула правильный результат
-    assert result[1] == 200  # Контроллер всегда возвращает 200, логика в сервисе
-    mock_jsonify.assert_called_once_with({'error': 'No data provided'})
-
-
-def test_register_user_with_valid_data_structure(mocker):
-    """
-    Тест проверяет, что контроллер корректно передает структурированные данные.
-    """
-    # Создаем mock объект для UserService
-    mock_user_service = mocker.Mock()
-    mock_user_service.register_user.return_value = {'user_id': 'uuid-123'}
-    
-    # Патчим инжектор
-    mock_injector = mocker.patch('infra.rest.users.injector')
-    mock_injector.get.return_value = mock_user_service
-    
-    # Патчим jsonify
-    mock_jsonify = mocker.patch('infra.rest.users.jsonify')
-    mock_jsonify.return_value = {'user_id': 'uuid-123'}
-    
-    # Подготавливаем полные тестовые данные
-    test_data = {
+@pytest.fixture
+def full_user_data():
+    """Фикстура с полными тестовыми данными пользователя"""
+    return {
         'first_name': 'Анна',
         'second_name': 'Петрова',
         'birthdate': '1985-05-15',
@@ -125,13 +49,110 @@ def test_register_user_with_valid_data_structure(mocker):
         'city': 'Санкт-Петербург',
         'password': 'secure_password_123'
     }
+
+
+def test_register_user_calls_user_service(mock_user_service, mock_injector, mock_jsonify, valid_user_data):
+    """
+    Тест проверяет, что контроллер users вызывает метод register_user 
+    экземпляра UserService через инжектор.
+    """
+    # Настраиваем mock объекты
+    expected_service_result = {'user_id': 'test_id'}
+    expected_jsonify_result = {'user_id': 'test_id'}
+    
+    mock_user_service.register_user.return_value = expected_service_result
+    mock_injector.get.return_value = mock_user_service
+    mock_jsonify.return_value = expected_jsonify_result
+    
+    # Вызываем функцию контроллера
+    result = register_user(valid_user_data)
+    
+    # Проверяем, что инжектор был вызван
+    mock_injector.get.assert_called_once()
+    
+    # Проверяем, что метод register_user был вызван с правильными данными
+    mock_user_service.register_user.assert_called_once_with(valid_user_data)
+    
+    # Проверяем, что jsonify был вызван с результатом сервиса
+    mock_jsonify.assert_called_once_with(expected_service_result)
+    
+    # Проверяем полное возвращаемое значение: (jsonify_result, status_code)
+    expected_result = (expected_jsonify_result, 200)
+    assert result == expected_result
+
+
+def test_register_user_handles_exception(mock_injector, mock_jsonify):
+    """
+    Тест проверяет, что контроллер правильно обрабатывает исключения.
+    """
+    # Настраиваем mock объекты
+    expected_error = "Ошибка инжектора"
+    expected_jsonify_result = {'error': expected_error}
+    
+    mock_injector.get.side_effect = Exception(expected_error)
+    mock_jsonify.return_value = expected_jsonify_result
+    
+    # Подготавливаем тестовые данные
+    test_data = {'test': 'data'}
     
     # Вызываем функцию контроллера
     result = register_user(test_data)
     
-    # Проверяем, что UserService получил точно те же данные
-    mock_user_service.register_user.assert_called_once_with(test_data)
+    # Проверяем, что jsonify был вызван с ошибкой
+    mock_jsonify.assert_called_once_with({'error': expected_error})
     
-    # Проверяем успешный ответ
-    assert result[1] == 200
-    mock_jsonify.assert_called_once_with({'user_id': 'uuid-123'})
+    # Проверяем полное возвращаемое значение: (jsonify_result, status_code)
+    expected_result = (expected_jsonify_result, 500)
+    assert result == expected_result
+
+
+def test_register_user_with_empty_data(mock_user_service, mock_injector, mock_jsonify):
+    """
+    Тест проверяет поведение контроллера с пустыми данными.
+    """
+    # Настраиваем mock объекты
+    expected_service_result = {'error': 'No data provided'}
+    expected_jsonify_result = {'error': 'No data provided'}
+    
+    mock_user_service.register_user.return_value = expected_service_result
+    mock_injector.get.return_value = mock_user_service
+    mock_jsonify.return_value = expected_jsonify_result
+    
+    # Вызываем функцию контроллера с None
+    result = register_user(None)
+    
+    # Проверяем, что UserService был вызван с None
+    mock_user_service.register_user.assert_called_once_with(None)
+    
+    # Проверяем, что jsonify был вызван с результатом сервиса
+    mock_jsonify.assert_called_once_with(expected_service_result)
+    
+    # Проверяем полное возвращаемое значение: (jsonify_result, status_code)
+    expected_result = (expected_jsonify_result, 200)
+    assert result == expected_result
+
+
+def test_register_user_with_valid_data_structure(mock_user_service, mock_injector, mock_jsonify, full_user_data):
+    """
+    Тест проверяет, что контроллер корректно передает структурированные данные.
+    """
+    # Настраиваем mock объекты
+    expected_service_result = {'user_id': 'uuid-123'}
+    expected_jsonify_result = {'user_id': 'uuid-123'}
+    
+    mock_user_service.register_user.return_value = expected_service_result
+    mock_injector.get.return_value = mock_user_service
+    mock_jsonify.return_value = expected_jsonify_result
+    
+    # Вызываем функцию контроллера
+    result = register_user(full_user_data)
+    
+    # Проверяем, что UserService получил точно те же данные
+    mock_user_service.register_user.assert_called_once_with(full_user_data)
+    
+    # Проверяем, что jsonify был вызван с результатом сервиса
+    mock_jsonify.assert_called_once_with(expected_service_result)
+    
+    # Проверяем полное возвращаемое значение: (jsonify_result, status_code)
+    expected_result = (expected_jsonify_result, 200)
+    assert result == expected_result
