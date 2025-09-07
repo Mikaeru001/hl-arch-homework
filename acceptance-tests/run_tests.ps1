@@ -4,11 +4,14 @@
 $ErrorActionPreference = "Stop"
 
 Write-Host "Cleaning up previous test data..." -ForegroundColor Green
+# Временно отключаем строгий режим для docker-compose down
+$ErrorActionPreference = "Continue"
 docker-compose -f docker-compose.test.yml down --remove-orphans
 if ($LASTEXITCODE -ne 0) {
-    Write-Host "Failed to stop previous containers" -ForegroundColor Red
-    exit 1
+    Write-Host "Warning: Could not stop previous containers (may not be running)" -ForegroundColor Yellow
 }
+# Включаем обратно строгий режим
+$ErrorActionPreference = "Stop"
 
 Write-Host "Removing test volume to ensure clean database..." -ForegroundColor Yellow
 # Временно отключаем строгий режим для удаления volume
@@ -38,11 +41,14 @@ if ($testExitCode -eq 0) {
 }
 
 Write-Host "Stopping containers..." -ForegroundColor Green
+# Временно отключаем строгий режим для docker-compose down
+$ErrorActionPreference = "Continue"
 docker-compose -f docker-compose.test.yml down
 if ($LASTEXITCODE -ne 0) {
-    Write-Host "Failed to stop containers after tests" -ForegroundColor Red
-    exit 1
+    Write-Host "Warning: Could not stop containers after tests" -ForegroundColor Yellow
 }
+# Включаем обратно строгий режим
+$ErrorActionPreference = "Stop"
 
 # Завершаем скрипт с кодом результата тестов
-exit $testExitCode 
+exit $testExitCode

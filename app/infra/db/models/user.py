@@ -1,8 +1,8 @@
-from flask_sqlalchemy import SQLAlchemy
+"""
+Модель пользователя
+"""
+from ..config import db
 
-db = SQLAlchemy()
-
-# Модель пользователя
 class User(db.Model):
     __tablename__ = 'users'
     

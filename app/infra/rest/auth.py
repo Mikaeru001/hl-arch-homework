@@ -22,7 +22,7 @@ def authenticate_user():
         logger.info(f"Authenticating user: {user_id}")
 
         # Импортируем модели здесь
-        from models import User
+        from infra.db.models import User
         
         # Теперь Flask приложение правильно настроено, можно использовать модели напрямую
         user = User.query.filter_by(id=user_id, password=password).first()

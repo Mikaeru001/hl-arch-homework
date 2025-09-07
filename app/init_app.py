@@ -14,10 +14,6 @@ def run_migrations():
     print("🔄 Starting database migrations...")
     
     try:
-        # Ждем, пока PostgreSQL будет готов
-        print("⏳ Waiting for PostgreSQL to be ready...")
-        time.sleep(5)  # Даем время PostgreSQL запуститься
-        
         # Запуск миграций
         result = subprocess.run([
             sys.executable, "-m", "alembic", "upgrade", "head"
