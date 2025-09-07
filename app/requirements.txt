@@ -3,4 +3,6 @@ Flask-SQLAlchemy==3.0.5
 psycopg2-binary==2.9.10
 python-dotenv==1.0.0
 alembic==1.12.1
-connexion[flask,swagger-ui,uvicorn]==3.0.6 
+connexion[flask,swagger-ui,uvicorn]==3.0.6
+injector==0.20.0
+pytest==7.4.3 
