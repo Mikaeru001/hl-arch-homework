@@ -2,8 +2,8 @@ from flask import request, jsonify
 import logging
 import uuid
 from datetime import datetime
-from app import injector
-from app.users import UserService
+from application import injector
+from application.users import UserService
 
 logger = logging.getLogger(__name__)
 
