@@ -1,4 +1,6 @@
 # PowerShell script for running acceptance tests with clean database at startup
+$OutputEncoding = [Console]::InputEncoding = [Console]::OutputEncoding = New-Object System.Text.UTF8Encoding
+
 
 # Включаем строгий режим обработки ошибок
 $ErrorActionPreference = "Stop"
@@ -27,7 +29,15 @@ Write-Host "Starting tests with clean database..." -ForegroundColor Cyan
 # Временно отключаем строгий режим для docker-compose up
 # чтобы скрипт не завершался при ошибке тестов
 $ErrorActionPreference = "Continue"
-docker-compose -f docker-compose.test.yml up --wait-timeout 300 --remove-orphans --abort-on-container-exit --exit-code-from acceptance-tests --build
+Write-Host "Logs can be found in docker-compose.test.log"
+
+# Выполняем docker-compose up и записываем вывод в файл
+docker-compose -f docker-compose.test.yml up --wait-timeout 300 --remove-orphans --abort-on-container-exit --exit-code-from acceptance-tests --build 2>&1 | Tee-Object -FilePath "docker-compose.test.log"
+
+Get-Content "docker-compose.test.log" -Encoding UTF8 | Where-Object { $_ -match "^acceptance-tests-1" } | Out-File -FilePath "acceptance-tests.log" -Encoding UTF8
+
+Write-Host "Acceptance tests logs can be found in acceptance-tests.log" -ForegroundColor Cyan
+Get-Content "acceptance-tests.log" -Encoding UTF8
 
 # Включаем обратно строгий режим
 $ErrorActionPreference = "Stop"

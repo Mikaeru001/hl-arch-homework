@@ -18,10 +18,7 @@
 **Windows PowerShell:**
 ```powershell
 cd acceptance-tests
-# Вариант 1: простой
 .\run_tests.ps1
-# Вариант 2: для более удобной работы с логами тестов: чтобы можно было в первую очередь визуально оценить отчет с тестами без примеси логов тестируемой системы
-& ".\run_tests.ps1" *> "tests.log"; Get-Content "tests.log" | Where-Object { $_ -match "^acceptance-tests-1" } | Out-File "acceptance-tests.log" -Encoding UTF8; Get-Content "acceptance-tests.log"
 ```
 
 **Linux/macOS:**

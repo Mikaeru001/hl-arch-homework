@@ -1,4 +1,5 @@
 from injector import Injector
+from infra.db.config.database import DatabaseModule
 
-# Инициализация инжектора
-injector = Injector()
+# Инициализация инжектора с модулем базы данных
+injector = Injector([DatabaseModule()])

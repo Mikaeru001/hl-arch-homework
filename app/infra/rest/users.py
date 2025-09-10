@@ -12,6 +12,12 @@ def register_user(body: dict):
     Функция регистрации нового пользователя.
     Соответствует operationId: register_user в OpenAPI спецификации.
     """
+    # Создаем копию для логирования с маскированием пароля
+    log_data = body.copy()
+    if "password" in log_data and log_data["password"]:
+        log_data["password"] = "***"
+    logger.info(f"Регистрация пользователя: {log_data}")
+    
     try:
         # Получаем экземпляр UserService через инжектор
         user_service = injector.get(UserService)
@@ -19,8 +25,10 @@ def register_user(body: dict):
         # Вызываем метод сервиса для регистрации пользователя
         result = user_service.register_user(body)
         
-        return jsonify(result), 200
-        
+        return jsonify(result)
+    except TypeError as e:
+        logger.error(f"Ошибка регистрации: {str(e)}", exc_info=True)
+        return {'message': str(e)}, 400
     except Exception as e:
         logger.error(f"Ошибка регистрации: {str(e)}", exc_info=True)
-        return jsonify({'error': str(e)}), 500
+        return {'message': str(e)}, 500

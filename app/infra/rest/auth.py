@@ -1,5 +1,9 @@
 from flask import request, jsonify
 import logging
+from application import injector
+from application.password_hasher import PasswordHasher
+from infra.db.repository.users import UserRepository
+import uuid
 
 logger = logging.getLogger(__name__)
 
@@ -16,18 +20,15 @@ def authenticate_user():
             logger.warning("Authentication failed: missing id or password")
             return jsonify({'error': 'Missing id or password'}), 400
 
-        user_id = data['id']
+        user_id = uuid.UUID(data['id'])
         password = data['password']
         
         logger.info(f"Authenticating user: {user_id}")
 
-        # Импортируем модели здесь
-        from infra.db.models import User
-        
-        # Теперь Flask приложение правильно настроено, можно использовать модели напрямую
-        user = User.query.filter_by(id=user_id, password=password).first()
+        password_from_db = injector.get(UserRepository).get_user_password(user_id)
 
-        if user:
+        # Проверяем пароль с использованием bcrypt
+        if password_from_db and PasswordHasher.check(password, password_from_db):
             token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
             logger.info(f"Authentication successful for user: {user_id}")
             return jsonify({'token': token})
