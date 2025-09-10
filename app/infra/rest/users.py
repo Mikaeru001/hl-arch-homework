@@ -1,7 +1,5 @@
-from flask import request, jsonify
+from flask import jsonify
 import logging
-import uuid
-from datetime import datetime
 from application import injector
 from application.users import UserService
 

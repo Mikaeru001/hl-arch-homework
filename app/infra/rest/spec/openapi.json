@@ -155,6 +155,13 @@
     }
   },
   "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Авторизация по токену, который был получен в методе /login"
+      }
+    },
     "responses": {
       "5xx": {
         "description": "Ошибка сервера",

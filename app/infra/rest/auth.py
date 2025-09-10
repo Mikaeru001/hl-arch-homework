@@ -2,6 +2,7 @@ from flask import request, jsonify
 import logging
 from application import injector
 from application.password_hasher import PasswordHasher
+from application.jwt_service import JWTService
 from infra.db.repository.users import UserRepository
 import uuid
 
@@ -29,7 +30,8 @@ def authenticate_user():
 
         # Проверяем пароль с использованием bcrypt
         if password_from_db and PasswordHasher.check(password, password_from_db):
-            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+            # Создаем уникальный JWT токен для пользователя
+            token = JWTService.create_access_token(str(user_id))
             logger.info(f"Authentication successful for user: {user_id}")
             return jsonify({'token': token})
         else:

@@ -1,9 +1,7 @@
 import requests
 import uuid
 import psycopg2
-import os
 import bcrypt
-
 
 def assert_not_authenticated(credentials: dict):
     """
@@ -164,8 +162,7 @@ class TestUserRegistration:
             "password": "testpass123"
         }
         
-        # Реквизиты для аутентификации (используем user_id из регистрации)
-        # Сначала нужно получить user_id, но для простоты используем фиксированный ID
+        # Используем фиксированный ID для аутентификации, которого нет в БД
         guessed_credentials = {
             "id": "a26b28e5-79c5-4f64-9631-44de3008a3de",
             "password": "testpass123"

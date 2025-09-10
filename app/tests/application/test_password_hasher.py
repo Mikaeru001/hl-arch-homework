@@ -1,4 +1,3 @@
-import pytest
 from application.password_hasher import PasswordHasher
 
 
