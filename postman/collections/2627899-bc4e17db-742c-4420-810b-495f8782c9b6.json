@@ -338,6 +338,14 @@
 		{
 			"key": "baseURL",
 			"value": ""
+		},
+		{
+			"key": "user_id",
+			"value": ""
+		},
+		{
+			"key": "auth_token",
+			"value": ""
 		}
 	]
 }
