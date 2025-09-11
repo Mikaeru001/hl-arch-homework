@@ -6,7 +6,110 @@
 	},
 	"item": [
 		{
+			"name": "Register",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "91be31c9-f560-4eff-95c7-825f5bbcb9e3",
+						"exec": [
+							"// Проверяем, что статус код равен 200\r",
+							"pm.test(\"Статус код должен быть 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// Проверяем, что ответ содержит user_id\r",
+							"pm.test(\"Ответ должен содержать user_id\", function () {\r",
+							"    const responseJson = pm.response.json();\r",
+							"    pm.expect(responseJson).to.have.property('user_id');\r",
+							"});\r",
+							"\r",
+							"// Проверяем, что user_id не пустой\r",
+							"pm.test(\"user_id не должен быть пустым\", function () {\r",
+							"    const responseJson = pm.response.json();\r",
+							"    pm.expect(responseJson.user_id).to.not.be.empty;\r",
+							"    pm.expect(responseJson.user_id).to.be.a('string');\r",
+							"});\r",
+							"\r",
+							"// Сохраняем user_id в переменную коллекции\r",
+							"pm.test(\"Сохраняем user_id в переменную коллекции\", function () {\r",
+							"    const responseJson = pm.response.json();\r",
+							"    pm.collectionVariables.set(\"user_id\", responseJson.user_id);\r",
+							"    console.log(\"user_id сохранен в переменную коллекции:\", responseJson.user_id);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"id": "2627899-5e65bde8-632d-4f91-b6bd-200d8de88d0f",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"first_name\": \"Иван\",\r\n    \"second_name\": \"Иванов\",\r\n    \"birthdate\": \"1990-01-01\",\r\n    \"biography\": \"Тестовый пользователь\",\r\n    \"city\": \"Москва\",\r\n    \"password\": \"secret123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/user/register",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"user",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "7091ea63-df04-468e-ac23-c38035413d28",
+						"exec": [
+							"// Проверяем, что статус код равен 200\r",
+							"pm.test(\"Статус код должен быть 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// Проверяем, что ответ содержит token\r",
+							"pm.test(\"Ответ должен содержать token\", function () {\r",
+							"    const responseJson = pm.response.json();\r",
+							"    pm.expect(responseJson).to.have.property('token');\r",
+							"});\r",
+							"\r",
+							"// Проверяем, что token не пустой\r",
+							"pm.test(\"token не должен быть пустым\", function () {\r",
+							"    const responseJson = pm.response.json();\r",
+							"    pm.expect(responseJson.token).to.not.be.empty;\r",
+							"    pm.expect(responseJson.token).to.be.a('string');\r",
+							"});\r",
+							"\r",
+							"// Сохраняем token в переменную коллекции\r",
+							"pm.test(\"Сохраняем token в переменную коллекции\", function () {\r",
+							"    const responseJson = pm.response.json();\r",
+							"    pm.collectionVariables.set(\"auth_token\", responseJson.token);\r",
+							"    console.log(\"Токен сохранен в переменную коллекции:\", responseJson.token);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
 			"id": "2627899-5728b614-4435-4479-8032-6b48d47a4d54",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
@@ -16,7 +119,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"id\": \"ivan\",\r\n    \"password\": \"secret\"\r\n}",
+					"raw": "{\r\n    \"id\": \"{{user_id}}\",\r\n    \"password\": \"secret123\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -24,18 +127,225 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8000/login",
-					"protocol": "http",
+					"raw": "{{baseURL}}/login",
 					"host": [
-						"localhost"
+						"{{baseURL}}"
 					],
-					"port": "8000",
 					"path": [
 						"login"
 					]
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Get user profile",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "7091ea63-df04-468e-ac23-c38035413d28",
+						"exec": [
+							"// Проверяем, что статус код равен 200\r",
+							"pm.test(\"Статус код должен быть 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// Проверяем соответствие JSON эталону и отсутствие лишних полей\r",
+							"pm.test(\"JSON соответствует эталону без лишних полей\", function () {\r",
+							"    const responseJson = pm.response.json();\r",
+							"    const expectedStructure = {\r",
+							"        \"id\": pm.collectionVariables.get(\"user_id\"),\r",
+							"        \"first_name\": \"Иван\",\r",
+							"        \"second_name\": \"Иванов\", \r",
+							"        \"birthdate\": \"1990-01-01\",\r",
+							"        \"biography\": \"Тестовый пользователь\",\r",
+							"        \"city\": \"Москва\"\r",
+							"    };\r",
+							"    \r",
+							"    // Проверяем наличие всех ожидаемых полей и их значений\r",
+							"    pm.expect(responseJson.id).to.eql(expectedStructure.id);\r",
+							"    pm.expect(responseJson.first_name).to.eql(expectedStructure.first_name);\r",
+							"    pm.expect(responseJson.second_name).to.eql(expectedStructure.second_name);\r",
+							"    pm.expect(responseJson.birthdate).to.eql(expectedStructure.birthdate);\r",
+							"    pm.expect(responseJson.biography).to.eql(expectedStructure.biography);\r",
+							"    pm.expect(responseJson.city).to.eql(expectedStructure.city);\r",
+							"        \r",
+							"    // Проверяем отсутствие лишних полей\r",
+							"    const expectedFields = Object.keys(expectedStructure);\r",
+							"    const actualFields = Object.keys(responseJson);\r",
+							"    pm.expect(actualFields).to.have.length(expectedFields.length);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"id": "2627899-8b54bb7a-50e7-4070-9415-fd0b81a6807f",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/user/get/{{user_id}}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"user",
+						"get",
+						"{{user_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add friend Not authenticated",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "7091ea63-df04-468e-ac23-c38035413d28",
+						"exec": [
+							"pm.test(\"Статус код должен быть 401\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"id": "2627899-86509941-4d3d-4f47-9e15-d114e0dfd6e5",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/friend/set/06b45dbe-46b2-43fb-9297-36d7fbf46db7",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"friend",
+						"set",
+						"06b45dbe-46b2-43fb-9297-36d7fbf46db7"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add friend Authenticated",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "7091ea63-df04-468e-ac23-c38035413d28",
+						"exec": [
+							"pm.test(\"Статус код должен быть 501\", function () {\r",
+							"    pm.response.to.have.status(501);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"id": "2627899-95cec995-ae86-448c-b05b-83fc19374e9e",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{auth_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/friend/set/06b45dbe-46b2-43fb-9297-36d7fbf46db7",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"friend",
+						"set",
+						"06b45dbe-46b2-43fb-9297-36d7fbf46db7"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "36ac3b94-8785-4892-9ee6-a7a4de49f234",
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "dbdb1437-8b02-46eb-9998-432092b9c1d8",
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURL",
+			"value": ""
+		},
+		{
+			"key": "user_id",
+			"value": ""
+		},
+		{
+			"key": "auth_token",
+			"value": ""
 		}
 	]
 }
