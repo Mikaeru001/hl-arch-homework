@@ -314,7 +314,7 @@
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "6a2f5a45-9efd-4887-b2ca-edb83a9786ec",
+				"id": "25b3ab3c-170a-4d30-8328-a82e5ee10a14",
 				"type": "text/javascript",
 				"packages": {},
 				"exec": [
@@ -325,7 +325,7 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "ce020cdc-2716-4171-a549-4b12ecd05c54",
+				"id": "b3b5d5a0-8e96-43aa-9fa3-ca1064176a36",
 				"type": "text/javascript",
 				"packages": {},
 				"exec": [
@@ -337,14 +337,6 @@
 	"variable": [
 		{
 			"key": "baseURL",
-			"value": ""
-		},
-		{
-			"key": "user_id",
-			"value": ""
-		},
-		{
-			"key": "auth_token",
 			"value": ""
 		}
 	]
