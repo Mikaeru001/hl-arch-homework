@@ -35,7 +35,7 @@ def assert_authenticated(credentials: dict) -> str:
 
     Args:
         credentials: Словарь с учетными данными (id, password)
-        
+
     Returns:
         str: Токен аутентификации
     """
@@ -247,6 +247,41 @@ class TestUserRegistration:
         )
         assert not is_invalid, (
             f"Неверный пароль '{wrong_password}' неожиданно прошел проверку с хэшем из БД"
+        )
+
+    def test_register_user_and_get_profile(self):
+        """Тест регистрации пользователя и получения его профиля через /user/get/{id}"""
+        # Тестовые данные для регистрации
+        test_data = {
+            "first_name": "Анна",
+            "second_name": "Петрова",
+            "birthdate": "1992-07-15",
+            "biography": "Тестовый пользователь для проверки получения профиля",
+            "city": "Казань",
+            "password": "profilepass789",
+        }
+
+        # 1. Регистрируем пользователя
+        user_id = register_user(test_data)
+
+        # 2. Запрашиваем информацию о пользователе через /user/get/{id}
+        url = f"http://app:8000/user/get/{user_id}"
+        response = requests.get(url)
+
+        # 3. Проверяем статус 200
+        assert response.status_code == 200, (
+            f"Expected status 200, got {response.status_code}"
+        )
+
+        # 4. Проверяем тело ответа
+        response_data = response.json()
+
+        # 5. Проверяем, что все поля совпадают с данными регистрации
+        expected_data = test_data.copy()
+        expected_data["id"] = user_id
+        expected_data.pop("password", None)
+        assert response_data == expected_data, (
+            f"Данные в ответе ({response_data}) не совпадают с ожидаемыми ({expected_data})"
         )
 
 

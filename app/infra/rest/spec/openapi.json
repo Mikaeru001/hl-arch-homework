@@ -153,6 +153,48 @@
         }
       }
     },
+    "/user/get/{id}": {
+      "get": {
+        "operationId": "get_user_profile",
+        "x-openapi-router-controller": "infra.rest.users",
+        "description": "Получение анкеты пользователя",
+        "parameters": [
+          {
+            "name": "id",
+            "schema": {
+              "$ref": "#/components/schemas/UserId"
+            },
+            "required": true,
+            "in": "path",
+            "description": "Идентификатор пользователя"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешное получение анкеты пользователя",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Невалидные данные"
+          },
+          "404": {
+            "description": "Анкета не найдена"
+          },
+          "500": {
+            "$ref": "#/components/responses/5xx"
+          },
+          "503": {
+            "$ref": "#/components/responses/5xx"
+          }
+        }
+      }
+    },
     "/friend/set/{user_id}": {
       "put": {
         "operationId": "add_friend",
@@ -250,6 +292,37 @@
         "description": "Дата рождения",
         "format": "date",
         "example": "2017-02-01"
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/UserId"
+          },
+          "first_name": {
+            "type": "string",
+            "example": "Имя",
+            "description": "Имя"
+          },
+          "second_name": {
+            "type": "string",
+            "example": "Фамилия",
+            "description": "Фамилия"
+          },
+          "birthdate": {
+            "$ref": "#/components/schemas/BirthDate"
+          },
+          "biography": {
+            "type": "string",
+            "example": "Хобби, интересы и т.п.",
+            "description": "Интересы"
+          },
+          "city": {
+            "type": "string",
+            "example": "Москва",
+            "description": "Город"
+          }
+        }
       }
     }
   }

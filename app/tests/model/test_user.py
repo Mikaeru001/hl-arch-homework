@@ -45,7 +45,7 @@ class TestUser:
             User.create_for_registration()
 
         # Проверяем сообщение об ошибке
-        assert (
-            str(exc_info.value) == "User.create_for_registration() missing 1 required"
-            " positional argument: 'password'"
+        assert str(exc_info.value) == (
+            "User.create_for_registration() missing 6 required positional arguments: "
+            "'password', 'first_name', 'second_name', 'birthdate', 'biography', and 'city'"
         )

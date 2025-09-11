@@ -1,7 +1,7 @@
 from flask import jsonify
 import logging
 from application import injector
-from application.users import UserService
+from application.users import UserService, UserNotFoundError
 
 logger = logging.getLogger(__name__)
 
@@ -30,3 +30,41 @@ def register_user(body: dict):
     except Exception as e:
         logger.error(f"Ошибка регистрации: {str(e)}", exc_info=True)
         return {'message': str(e)}, 500
+
+
+def get_user_profile(id: str):
+    """
+    Функция получения профиля пользователя по ID.
+    Соответствует operationId: get_user_profile в OpenAPI спецификации.
+    """
+    logger.info(f"Получение профиля пользователя: {id}")
+    
+    try:
+        # Получаем экземпляр UserService через инжектор
+        user_service = injector.get(UserService)
+        
+        # Вызываем метод сервиса для получения профиля пользователя
+        user = user_service.get_user_profile(id)
+        
+        # Сериализуем объект User в JSON
+        profile_data = {
+            "id": str(user.id),
+            "first_name": user.first_name,
+            "second_name": user.second_name,
+            "birthdate": user.birthdate.isoformat() if user.birthdate else None,
+            "biography": user.biography,
+            "city": user.city,
+        }
+        
+        # Возвращаем данные со статусом 200
+        return jsonify(profile_data)
+        
+    except ValueError as e:
+        logger.error(f"Невалидные данные: {str(e)}")
+        return {'message': 'Невалидные данные'}, 400
+    except UserNotFoundError as e:
+        logger.warning(f"Пользователь не найден: {str(e)}")
+        return {'message': 'Анкета не найдена'}, 404
+    except Exception as e:
+        logger.error(f"Ошибка получения профиля: {str(e)}", exc_info=True)
+        return {'message': 'Ошибка получения профиля'}, 500
