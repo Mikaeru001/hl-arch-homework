@@ -22,35 +22,16 @@ docker-compose up --build
 
 ### Логика запуска
 
-Приложение автоматически:
-1. **Ждет готовности PostgreSQL** (healthcheck)
-2. **Запускает миграции** Alembic
-3. **Запускает Flask сервер**
+Docker compose файл и приложению обеспечивают последовательно:
+1. Ожидание готовности PostgreSQL
+2. Запуск миграции Alembic
+3. Запуск Flask сервера
 
 При неудачном запуске сервис получает **3 попытки перезапуска** (`restart: on-failure:3`).
 
 ## API Endpoints
 
-### POST /login
-Принимает JSON с атрибутами `id` и `password`, возвращает JSON с полем `token`.
-
-**Пример запроса:**
-```json
-{
-  "id": "user123",
-  "password": "password123"
-}
-```
-
-**Пример ответа:**
-```json
-{
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-}
-```
-
-### GET /health
-Проверка состояния сервиса.
+Описание посредством спецификации [openapi.json](infra/rest/spec/openapi.json).
 
 ## Архитектура приложения
 
