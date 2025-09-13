@@ -156,6 +156,7 @@ Thumbs.db
 
 # Assignment file (ignore but keep docs directory)
 docs/задания.md
+docs/план-выполнения.md
 
 # Logs
 logs/
