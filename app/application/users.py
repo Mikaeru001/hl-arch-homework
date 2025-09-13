@@ -3,6 +3,7 @@ import uuid
 from injector import inject, singleton
 
 from application.password_hasher import PasswordHasher
+from application.user_search_query import UserSearchQuery
 from infra.db.repository.users import UserRepository
 from model.user import User
 
@@ -76,3 +77,20 @@ class UserService:
         
         logger.info("Профиль пользователя успешно получен")
         return user
+
+    def search_users(self, search_query: UserSearchQuery):
+        """
+        Поиск пользователей по критериям.
+
+        Args:
+            search_query (UserSearchQuery): Критерии поиска
+
+        Returns:
+            List[User]: Список найденных пользователей
+        """
+        logger.info(f"Обработка запроса на поиск пользователей: {search_query}")
+        
+        users = self.user_repository.search_users(search_query)
+        
+        logger.info(f"Найдено {len(users)} пользователей")
+        return users

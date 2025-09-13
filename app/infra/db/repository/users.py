@@ -1,6 +1,7 @@
 import uuid
 from injector import inject, singleton
 from sqlalchemy import Engine, text
+from application.user_search_query import UserSearchQuery
 from model.user import User
 
 @singleton
@@ -58,3 +59,41 @@ class UserRepository:
                     city=row[6]
                 )
             return None
+
+    def search_users(self, search_query: UserSearchQuery):
+        """
+        Поиск пользователей по префиксу имени и фамилии.
+        
+        Args:
+            search_query: Объект с критериями поиска
+            
+        Returns:
+            List[User]: Список найденных пользователей
+        """
+        query = text("""
+            SELECT id, first_name, second_name, birthdate, biography, city 
+            FROM users 
+            WHERE first_name LIKE :first_name_prefix AND second_name LIKE :last_name_prefix
+        """)
+        
+        # Добавляем символ % для поиска по префиксу
+        params = {
+            'first_name_prefix': f"{search_query.first_name}%",
+            'last_name_prefix': f"{search_query.last_name}%"
+        }
+        
+        with self.engine.connect() as connection:
+            result = connection.execute(query, params)
+            users = []
+            for row in result:
+                user = User(
+                    user_id=uuid.UUID(row[0]),
+                    password=None,  # Пароль не возвращается при поиске
+                    first_name=row[1],
+                    second_name=row[2],
+                    birthdate=row[3],
+                    biography=row[4],
+                    city=row[5]
+                )
+                users.append(user)
+            return users

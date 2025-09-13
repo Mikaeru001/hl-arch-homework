@@ -310,6 +310,120 @@ class TestHealthCheck:
         )
 
 
+def verify_search_results(first_name: str, last_name: str, expected_users: list):
+    """
+    Вспомогательная функция для верификации результатов поиска пользователей.
+    
+    Args:
+        first_name: Имя для поиска
+        last_name: Фамилия для поиска
+        expected_users: Список ожидаемых пользователей в формате [(first_name, last_name), ...]
+    """
+    url = "http://app:8000/user/search"
+    params = {
+        "first_name": first_name,
+        "last_name": last_name
+    }
+    
+    response = requests.get(url, params=params)
+    assert response.status_code == 200, (
+        f"Expected status 200, got {response.status_code}"
+    )
+    
+    response_data = response.json()
+    
+    if not expected_users:
+        # Проверяем пустой результат
+        assert response_data == [], (
+            f"Expected empty array for '{first_name} {last_name}', got {response_data}"
+        )
+    else:
+        # Проверяем количество результатов
+        assert len(response_data) == len(expected_users), (
+            f"Expected {len(expected_users)} users for '{first_name} {last_name}', got {len(response_data)}"
+        )
+        
+        # Проверяем, что все ожидаемые пользователи присутствуют в результатах
+        user_names = [(user["first_name"], user["second_name"]) for user in response_data]
+        
+        for expected_user in expected_users:
+            assert expected_user in user_names, (
+                f"Expected user {expected_user} not found in results {user_names}"
+            )
+
+
+class TestUserSearch:
+    """Тесты поиска пользователей"""
+
+    def test_search_users_returns_200(self):
+        """Тест проверки, что сервис с operationId 'search_users' возвращает 200"""
+        
+        # URL для тестирования
+        url = "http://app:8000/user/search"
+        
+        # Параметры запроса
+        params = {
+            "first_name": "Тест",
+            "last_name": "Пользователь"
+        }
+        
+        # Выполняем GET запрос
+        response = requests.get(url, params=params)
+        
+        # Проверяем статус 200
+        assert response.status_code == 200, (
+            f"Expected status 200, got {response.status_code}"
+        )
+        
+        # Проверяем, что в теле ответа вернулся пустой JSON-массив
+        response_data = response.json()
+        assert response_data == [], (
+            f"Expected empty array, got {response_data}"
+        )
+
+    def test_search_users_with_registered_users(self):
+        """Тест поиска пользователей с зарегистрированными пользователями"""
+        
+        # 1. Регистрируем трех пользователей
+        users_data = [
+            {
+                "first_name": "Александр",
+                "second_name": "Тополев",
+                "birthdate": "1990-01-01",
+                "biography": "Первый тестовый пользователь",
+                "city": "Москва",
+                "password": "password1"
+            },
+            {
+                "first_name": "Александра",
+                "second_name": "Топорова",
+                "birthdate": "1992-05-15",
+                "biography": "Второй тестовый пользователь",
+                "city": "Санкт-Петербург",
+                "password": "password2"
+            },
+            {
+                "first_name": "Евгения",
+                "second_name": "Тополева",
+                "birthdate": "1988-12-10",
+                "biography": "Третий тестовый пользователь",
+                "city": "Казань",
+                "password": "password3"
+            }
+        ]
+        
+        # Регистрируем пользователей
+        for user_data in users_data:
+            register_user(user_data)
+        
+        # 2. Тест 1: Поиск "Алекс Иван" - должен вернуть пустой массив
+        verify_search_results("Алекс", "Иван", [])
+        
+        # 3. Тест 2: Поиск "Алекс Топ" - должен вернуть пользователей 1) и 2)
+        expected_users = [("Александр", "Тополев"), ("Александра", "Топорова")]
+        verify_search_results("Алекс", "Топ", expected_users)
+
+
 class TestFriends:
     """Тесты функциональности друзей"""
 

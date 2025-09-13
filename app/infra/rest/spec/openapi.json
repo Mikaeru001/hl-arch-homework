@@ -195,6 +195,61 @@
         }
       }
     },
+    "/user/search": {
+      "get": {
+        "operationId": "search_users",
+        "x-openapi-router-controller": "infra.rest.users",
+        "description": "Поиск анкет",
+        "parameters": [
+          {
+            "name": "first_name",
+            "schema": {
+              "type": "string",
+              "description": "Часть имени для поиска",
+              "example": "Конст"
+            },
+            "in": "query",
+            "required": true,
+            "description": "Условие поиска по имени"
+          },
+          {
+            "name": "last_name",
+            "schema": {
+              "type": "string",
+              "description": "Часть фамилии для поиска",
+              "example": "Оси"
+            },
+            "in": "query",
+            "required": true,
+            "description": "Условие поиска по фамилии"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешные поиск пользователя",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Невалидные данные"
+          },
+          "500": {
+            "$ref": "#/components/responses/5xx"
+          },
+          "503": {
+            "$ref": "#/components/responses/5xx"
+          }
+        }
+      }
+    },
     "/friend/set/{user_id}": {
       "put": {
         "operationId": "add_friend",
