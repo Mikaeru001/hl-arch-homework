@@ -423,6 +423,40 @@ class TestUserSearch:
         expected_users = [("Александр", "Тополев"), ("Александра", "Топорова")]
         verify_search_results("Алекс", "Топ", expected_users)
 
+    def test_search_users_case_insensitive(self):
+        """Тест проверки регистронезависимого поиска пользователей"""
+        
+        # 1. Регистрируем двух пользователей
+        users_data = [
+            {
+                "first_name": "Иван",
+                "second_name": "Разумовский",
+                "birthdate": "1985-03-15",
+                "biography": "Первый тестовый пользователь для проверки регистронезависимого поиска",
+                "city": "Москва",
+                "password": "password1"
+            },
+            {
+                "first_name": "Дарья",
+                "second_name": "Стрелецкая",
+                "birthdate": "1990-07-22",
+                "biography": "Второй тестовый пользователь для проверки регистронезависимого поиска",
+                "city": "Санкт-Петербург",
+                "password": "password2"
+            }
+        ]
+        
+        # Регистрируем пользователей
+        for user_data in users_data:
+            register_user(user_data)
+        
+        # 2. Первый поиск: "Ива" "Раз" - должен вернуть только Иван Разумовский
+        expected_users_first = [("Иван", "Разумовский")]
+        verify_search_results("Ива", "Раз", expected_users_first)
+        
+        # 3. Второй поиск: "ива" "рАз" (разный регистр) - должен вернуть тот же результат
+        verify_search_results("ива", "рАз", expected_users_first)
+
 
 class TestFriends:
     """Тесты функциональности друзей"""

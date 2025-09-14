@@ -62,7 +62,7 @@ class UserRepository:
 
     def search_users(self, search_query: UserSearchQuery):
         """
-        Поиск пользователей по префиксу имени и фамилии.
+        Поиск пользователей по префиксу имени и фамилии (регистронезависимый).
         
         Args:
             search_query: Объект с критериями поиска
@@ -73,7 +73,7 @@ class UserRepository:
         query = text("""
             SELECT id, first_name, second_name, birthdate, biography, city 
             FROM users 
-            WHERE first_name LIKE :first_name_prefix AND second_name LIKE :last_name_prefix
+            WHERE LOWER(first_name) LIKE LOWER(:first_name_prefix) AND LOWER(second_name) LIKE LOWER(:last_name_prefix)
         """)
         
         # Добавляем символ % для поиска по префиксу
