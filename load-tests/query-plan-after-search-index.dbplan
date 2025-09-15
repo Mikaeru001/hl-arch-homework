@@ -1,0 +1,171 @@
+{
+  "version": "1",
+  "signature": "PostgreSQL JDBC Driver",
+  "date": "2025-09-15T03:06:43.283460900",
+  "sql": "SELECT id, first_name, second_name, birthdate, biography, city \r\nFROM users \r\nWHERE LOWER(first_name) LIKE LOWER(\u0027Робе%\u0027) AND LOWER(second_name) LIKE LOWER(\u0027Абр%\u0027)\r\nORDER BY id",
+  "root": [
+    {
+      "name": "",
+      "kind": "Sort",
+      "type": "Sort",
+      "cond": "",
+      "desc": "",
+      "attributes": [
+        {
+          "Parallel-Aware": "false"
+        },
+        {
+          "Async-Capable": "false"
+        },
+        {
+          "Startup-Cost": "202.04"
+        },
+        {
+          "Total-Cost": "202.10"
+        },
+        {
+          "Plan-Rows": "25"
+        },
+        {
+          "Plan-Width": "90"
+        },
+        {
+          "Actual-Startup-Time": "0.138"
+        },
+        {
+          "Actual-Total-Time": "0.139"
+        },
+        {
+          "Actual-Rows": "6"
+        },
+        {
+          "Actual-Loops": "1"
+        },
+        {
+          "Sort-Key": "\n        id\n      "
+        },
+        {
+          "Sort-Method": "quicksort"
+        },
+        {
+          "Sort-Space-Used": "25"
+        },
+        {
+          "Sort-Space-Type": "Memory"
+        }
+      ],
+      "child": [
+        {
+          "name": "users",
+          "kind": "Node",
+          "type": "Bitmap Heap Scan",
+          "cond": "((lower((first_name)::text) ~~ \u0027робе%\u0027::text)\r\nand (lower((second_name)::text) ~~ \u0027абр%\u0027::text))",
+          "desc": "((lower((first_name)::text) ~~ \u0027робе%\u0027::text) AND (lower((second_name)::text) ~~ \u0027абр%\u0027::text))",
+          "attributes": [
+            {
+              "Parent-Relationship": "Outer"
+            },
+            {
+              "Parallel-Aware": "false"
+            },
+            {
+              "Async-Capable": "false"
+            },
+            {
+              "Relation-Name": "users"
+            },
+            {
+              "Alias": "users"
+            },
+            {
+              "Startup-Cost": "103.43"
+            },
+            {
+              "Total-Cost": "201.45"
+            },
+            {
+              "Plan-Rows": "25"
+            },
+            {
+              "Plan-Width": "90"
+            },
+            {
+              "Actual-Startup-Time": "0.100"
+            },
+            {
+              "Actual-Total-Time": "0.127"
+            },
+            {
+              "Actual-Rows": "6"
+            },
+            {
+              "Actual-Loops": "1"
+            },
+            {
+              "Filter": "((lower((first_name)::text) ~~ \u0027робе%\u0027::text) AND (lower((second_name)::text) ~~ \u0027абр%\u0027::text))"
+            },
+            {
+              "Rows-Removed-by-Filter": "0"
+            },
+            {
+              "Exact-Heap-Blocks": "5"
+            },
+            {
+              "Lossy-Heap-Blocks": "0"
+            }
+          ],
+          "child": [
+            {
+              "name": "idx_users_name_search",
+              "kind": "Index scan",
+              "type": "Bitmap Index Scan",
+              "cond": "((lower((first_name)::text) ~\u003e\u003d~ \u0027робе\u0027::text)\r\nand (lower((first_name)::text) ~\u003c~ \u0027робж\u0027::text)\r\nand (lower((second_name)::text) ~\u003e\u003d~ \u0027абр\u0027::text)\r\nand (lower((second_name)::text) ~\u003c~ \u0027абс\u0027::text))",
+              "desc": "",
+              "attributes": [
+                {
+                  "Parent-Relationship": "Outer"
+                },
+                {
+                  "Parallel-Aware": "false"
+                },
+                {
+                  "Async-Capable": "false"
+                },
+                {
+                  "Index-Name": "idx_users_name_search"
+                },
+                {
+                  "Startup-Cost": "0.00"
+                },
+                {
+                  "Total-Cost": "103.42"
+                },
+                {
+                  "Plan-Rows": "25"
+                },
+                {
+                  "Plan-Width": "0"
+                },
+                {
+                  "Actual-Startup-Time": "0.069"
+                },
+                {
+                  "Actual-Total-Time": "0.069"
+                },
+                {
+                  "Actual-Rows": "6"
+                },
+                {
+                  "Actual-Loops": "1"
+                },
+                {
+                  "Index-Cond": "((lower((first_name)::text) ~\u003e\u003d~ \u0027робе\u0027::text) AND (lower((first_name)::text) ~\u003c~ \u0027робж\u0027::text) AND (lower((second_name)::text) ~\u003e\u003d~ \u0027абр\u0027::text) AND (lower((second_name)::text) ~\u003c~ \u0027абс\u0027::text))"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

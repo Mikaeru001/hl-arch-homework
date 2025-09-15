@@ -1,0 +1,171 @@
+{
+  "version": "1",
+  "signature": "PostgreSQL JDBC Driver",
+  "date": "2025-09-15T02:57:09.566437300",
+  "sql": "SELECT id, first_name, second_name, birthdate, biography, city \r\nFROM users \r\nWHERE LOWER(first_name) LIKE LOWER(\u0027Робе%\u0027) AND LOWER(second_name) LIKE LOWER(\u0027Абр%\u0027)\r\nORDER BY id",
+  "root": [
+    {
+      "name": "",
+      "kind": "Merge",
+      "type": "Gather Merge",
+      "cond": "",
+      "desc": "",
+      "attributes": [
+        {
+          "Parallel-Aware": "false"
+        },
+        {
+          "Async-Capable": "false"
+        },
+        {
+          "Startup-Cost": "32260.95"
+        },
+        {
+          "Total-Cost": "32263.28"
+        },
+        {
+          "Plan-Rows": "20"
+        },
+        {
+          "Plan-Width": "90"
+        },
+        {
+          "Actual-Startup-Time": "340.792"
+        },
+        {
+          "Actual-Total-Time": "342.668"
+        },
+        {
+          "Actual-Rows": "6"
+        },
+        {
+          "Actual-Loops": "1"
+        },
+        {
+          "Workers-Planned": "2"
+        },
+        {
+          "Workers-Launched": "2"
+        }
+      ],
+      "child": [
+        {
+          "name": "",
+          "kind": "Sort",
+          "type": "Sort",
+          "cond": "",
+          "desc": "",
+          "attributes": [
+            {
+              "Parent-Relationship": "Outer"
+            },
+            {
+              "Parallel-Aware": "false"
+            },
+            {
+              "Async-Capable": "false"
+            },
+            {
+              "Startup-Cost": "31260.92"
+            },
+            {
+              "Total-Cost": "31260.95"
+            },
+            {
+              "Plan-Rows": "10"
+            },
+            {
+              "Plan-Width": "90"
+            },
+            {
+              "Actual-Startup-Time": "335.175"
+            },
+            {
+              "Actual-Total-Time": "335.176"
+            },
+            {
+              "Actual-Rows": "2"
+            },
+            {
+              "Actual-Loops": "3"
+            },
+            {
+              "Sort-Key": "\n            id\n          "
+            },
+            {
+              "Sort-Method": "quicksort"
+            },
+            {
+              "Sort-Space-Used": "25"
+            },
+            {
+              "Sort-Space-Type": "Memory"
+            },
+            {
+              "Workers": "\n            \n              0\n              quicksort\n              25\n              Memory\n            \n            \n              1\n              quicksort\n              25\n              Memory\n            \n          "
+            }
+          ],
+          "child": [
+            {
+              "name": "users",
+              "kind": "Node",
+              "type": "Parallel Seq Scan",
+              "cond": "((lower((first_name)::text) ~~ \u0027робе%\u0027::text)\r\nand (lower((second_name)::text) ~~ \u0027абр%\u0027::text))",
+              "desc": "((lower((first_name)::text) ~~ \u0027робе%\u0027::text) AND (lower((second_name)::text) ~~ \u0027абр%\u0027::text))",
+              "attributes": [
+                {
+                  "Parent-Relationship": "Outer"
+                },
+                {
+                  "Parallel-Aware": "true"
+                },
+                {
+                  "Async-Capable": "false"
+                },
+                {
+                  "Relation-Name": "users"
+                },
+                {
+                  "Alias": "users"
+                },
+                {
+                  "Startup-Cost": "0.00"
+                },
+                {
+                  "Total-Cost": "31260.76"
+                },
+                {
+                  "Plan-Rows": "10"
+                },
+                {
+                  "Plan-Width": "90"
+                },
+                {
+                  "Actual-Startup-Time": "221.878"
+                },
+                {
+                  "Actual-Total-Time": "335.116"
+                },
+                {
+                  "Actual-Rows": "2"
+                },
+                {
+                  "Actual-Loops": "3"
+                },
+                {
+                  "Filter": "((lower((first_name)::text) ~~ \u0027робе%\u0027::text) AND (lower((second_name)::text) ~~ \u0027абр%\u0027::text))"
+                },
+                {
+                  "Rows-Removed-by-Filter": "333308"
+                },
+                {
+                  "Workers": "\n              "
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

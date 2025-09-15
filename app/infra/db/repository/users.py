@@ -74,6 +74,7 @@ class UserRepository:
             SELECT id, first_name, second_name, birthdate, biography, city 
             FROM users 
             WHERE LOWER(first_name) LIKE LOWER(:first_name_prefix) AND LOWER(second_name) LIKE LOWER(:last_name_prefix)
+            ORDER BY id
         """)
         
         # Добавляем символ % для поиска по префиксу
