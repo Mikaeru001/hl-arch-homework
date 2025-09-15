@@ -22,7 +22,7 @@ def upgrade() -> None:
     # Создаем составной функциональный индекс для ускорения поиска по префиксам имен и фамилий
     op.execute("""
         CREATE INDEX idx_users_name_search ON users (
-            LOWER(first_name) varchar_pattern_ops, LOWER(second_name) varchar_pattern_ops)
+            LOWER(second_name) varchar_pattern_ops, LOWER(first_name) varchar_pattern_ops)
     """)
 
 

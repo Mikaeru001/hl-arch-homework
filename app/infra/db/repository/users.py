@@ -73,7 +73,7 @@ class UserRepository:
         query = text("""
             SELECT id, first_name, second_name, birthdate, biography, city 
             FROM users 
-            WHERE LOWER(first_name) LIKE LOWER(:first_name_prefix) AND LOWER(second_name) LIKE LOWER(:last_name_prefix)
+            WHERE LOWER(second_name) LIKE LOWER(:last_name_prefix) and LOWER(first_name) LIKE LOWER(:first_name_prefix)
             ORDER BY id
         """)
         
