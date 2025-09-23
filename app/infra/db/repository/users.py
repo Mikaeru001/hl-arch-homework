@@ -1,6 +1,7 @@
 import uuid
 from injector import inject, singleton
-from sqlalchemy import Engine, text
+from sqlalchemy import text
+from infra.db.config.database import WriteEngine, ReadOnlyEngine
 from application.user_search_query import UserSearchQuery
 from model.user import User
 
@@ -8,8 +9,9 @@ from model.user import User
 class UserRepository:
 
     @inject
-    def __init__(self, engine: Engine):
-        self.engine = engine
+    def __init__(self, write_engine: WriteEngine, read_only_engine: ReadOnlyEngine):
+        self.write_engine = write_engine
+        self.read_only_engine = read_only_engine
 
     def insert_user(self, user: User):
         # Подготавливаем данные для всех полей таблицы
@@ -27,7 +29,7 @@ class UserRepository:
             VALUES (:id, :password, :first_name, :second_name, :birthdate, :biography, :city)
         """)
         
-        with self.engine.connect() as connection:
+        with self.write_engine.connect() as connection:
             connection.execute(query, user_data)
             connection.commit()
 
@@ -35,7 +37,7 @@ class UserRepository:
         query = text("""
             SELECT password FROM users WHERE id = :id
         """)
-        with self.engine.connect() as connection:
+        with self.write_engine.connect() as connection:
             result = connection.execute(query, {'id': str(user_id)})
             row = result.fetchone()
             return row[0] if row else None
@@ -45,7 +47,7 @@ class UserRepository:
             SELECT id, password, first_name, second_name, birthdate, biography, city 
             FROM users WHERE id = :id
         """)
-        with self.engine.connect() as connection:
+        with self.read_only_engine.connect() as connection:
             result = connection.execute(query, {'id': str(user_id)})
             row = result.fetchone()
             if row:
@@ -83,7 +85,7 @@ class UserRepository:
             'last_name_prefix': f"{search_query.last_name}%"
         }
         
-        with self.engine.connect() as connection:
+        with self.read_only_engine.connect() as connection:
             result = connection.execute(query, params)
             users = []
             for row in result:

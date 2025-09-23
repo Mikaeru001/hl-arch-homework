@@ -1,0 +1,81 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: app_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5434:5432"  # Другой порт, чтобы не конфликтовать с основным приложением
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - postgres_data_replica_1:/var/lib/postgresql/data_replica_1
+      - postgres_data_replica_2:/var/lib/postgresql/data_replica_2
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 2s
+      retries: 5
+
+  postgres_replica_1:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: app_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5435:5432"  # Другой порт, чтобы не конфликтовать с основным приложением
+    volumes:
+      - postgres_data_replica_1:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 2s
+      retries: 5
+
+  postgres_replica_2:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: app_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5436:5432"  # Другой порт, чтобы не конфликтовать с основным приложением
+    volumes:
+      - postgres_data_replica_2:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 2s
+      retries: 5
+
+  app:
+    build: ../../app  # Собираем из папки app
+    ports:
+      - "8002:8000"  # Другой порт для тестового приложения
+    environment:
+      DATABASE_URL: postgresql+psycopg2://postgres:password@postgres:5432/app_db
+      # READ_ONLY_DATABASE_URL: postgresql+psycopg2://postgres:password@postgres_replica_1:5432,postgres_replica_2:5432/app_db
+      READ_ONLY_DATABASE_URL: postgresql+psycopg2://postgres:password@/app_db?host=postgres_replica_1,postgres_replica_2&port=5432,5432&target_session_attrs=prefer-standby&load_balance_hosts=random
+      # Переменные окружения для нагрузочного тестирования
+      FLASK_ENV: production
+      LOG_LEVEL: WARNING  # Уменьшаем логирование для тестов
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ../../app:/app
+    restart: on-failure:3
+    command: python init_app.py
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 5s
+      timeout: 2s
+      retries: 5
+      start_period: 5s
+    
+
+volumes:
+  postgres_data:
+  postgres_data_replica_1:
+  postgres_data_replica_2:

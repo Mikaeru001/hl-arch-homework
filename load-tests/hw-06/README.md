@@ -19,7 +19,7 @@
 1. Запустить приложение и БД
 
     ```bash
-    cd load-tests
+    cd load-tests/hw-06
     docker compose up --build -d
     ```
 1. Загрузить пользователей в таблицу `users`
