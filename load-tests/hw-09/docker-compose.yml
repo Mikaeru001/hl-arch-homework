@@ -54,8 +54,8 @@ services:
     ports:
       - "8002:8000"  # Другой порт для тестового приложения
     environment:
-      DATABASE_URL: postgresql+psycopg2://postgres:password@postgres:5432/app_db
-      READ_ONLY_DATABASE_URL: postgresql+psycopg2://postgres:password@/app_db?host=postgres_replica_1,postgres_replica_2&port=5432,5432&target_session_attrs=prefer-standby&load_balance_hosts=random
+      DATABASE_URL: postgresql+psycopg2://postgres:password@/app_db?host=postgres,postgres_replica_1,postgres_replica_2&port=5432,5432,5432&target_session_attrs=primary
+      READ_ONLY_DATABASE_URL: postgresql+psycopg2://postgres:password@/app_db?host=postgres_replica_1,postgres_replica_2,postgres&port=5432,5432,5432&target_session_attrs=prefer-standby&load_balance_hosts=random
       # Переменные окружения для нагрузочного тестирования
       FLASK_ENV: production
       LOG_LEVEL: WARNING  # Уменьшаем логирование для тестов

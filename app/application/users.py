@@ -49,7 +49,7 @@ class UserService:
         user = User.create_for_registration(**user_data)
         self.user_repository.insert_user(user)
 
-        logger.info("Регистрация пользователя успешно обработана")
+        logger.info(f"Регистрация пользователя успешно обработана, user_id: {user.id}")
         return {"user_id": user.id}
 
     def get_user_profile(self, user_id: str):
